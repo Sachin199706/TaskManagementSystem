@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/Services/" />
+  <Folder Name="/Services/UserService/">
+    <Project Path="backend/src/Services/UserService/UserService.API/UserService.API.csproj" />
+  </Folder>
+</Solution>
