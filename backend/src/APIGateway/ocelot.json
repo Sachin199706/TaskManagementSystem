@@ -1,0 +1,66 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/auth/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [ { "Host": "user-service", "Port": 5002 } ],
+      "UpstreamPathTemplate": "/api/auth/{everything}",
+      "UpstreamHttpMethod": [ "POST", "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/users/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [ { "Host": "user-service", "Port": 5002 } ],
+      "UpstreamPathTemplate": "/api/users/{everything}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/tasks/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [ { "Host": "task-service", "Port": 5001 } ],
+      "UpstreamPathTemplate": "/api/tasks/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "PATCH", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 100
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/admin/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [ { "Host": "task-service", "Port": 5001 } ],
+      "UpstreamPathTemplate": "/api/admin/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "RouteClaimsRequirement": {
+        "Role": "Admin"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/hubs/notifications",
+      "DownstreamScheme": "ws",
+      "DownstreamHostAndPorts": [ { "Host": "notification-service", "Port": 5003 } ],
+      "UpstreamPathTemplate": "/hubs/notifications",
+      "UpstreamHttpMethod": [ "GET", "POST" ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:7000",
+    "RateLimitOptions": {
+      "DisableRateLimitHeaders": false,
+      "QuotaExceededMessage": "Rate limit exceeded. Please slow down.",
+      "HttpStatusCode": 429
+    }
+  }
+}
