@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task Management System — Architecture Diagram</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e1a;
+  --bg2: #111827;
+  --bg3: #1a2235;
+  --border: #1e2d45;
+  --blue: #3b82f6;
+  --cyan: #06b6d4;
+  --green: #10b981;
+  --orange: #f59e0b;
+  --red: #ef4444;
+  --purple: #8b5cf6;
+  --pink: #ec4899;
+  --teal: #14b8a6;
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── background grid ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.35;
+}
+
+.wrapper { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 40px 24px 80px; }
+
+/* ── Header ── */
+header { text-align: center; padding: 48px 0 56px; }
+.title-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 16px;
+}
+h1 {
+  font-family: var(--sans);
+  font-size: clamp(32px, 5vw, 64px);
+  font-weight: 800;
+  letter-spacing: -2px;
+  background: linear-gradient(135deg, #e2e8f0 0%, var(--cyan) 50%, var(--blue) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+.subtitle {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+.tech-pills {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+  margin-top: 28px;
+}
+.pill {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid;
+  letter-spacing: 0.5px;
+  cursor: default;
+  transition: transform 0.2s;
+}
+.pill:hover { transform: translateY(-2px); }
+.pill-blue  { color: var(--blue);   border-color: #1d4ed8; background: #1e3a5f22; }
+.pill-cyan  { color: var(--cyan);   border-color: #0e7490; background: #0e749022; }
+.pill-green { color: var(--green);  border-color: #047857; background: #04785722; }
+.pill-orange{ color: var(--orange); border-color: #b45309; background: #b4530922; }
+.pill-purple{ color: var(--purple); border-color: #6d28d9; background: #6d28d922; }
+.pill-pink  { color: var(--pink);   border-color: #be185d; background: #be185d22; }
+.pill-teal  { color: var(--teal);   border-color: #0f766e; background: #0f766e22; }
+
+/* ── Section headers ── */
+.section { margin-bottom: 64px; }
+.section-label {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+.section-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+.section-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 32px;
+}
+
+/* ── Architecture Flow ── */
+.arch-flow {
+  display: flex; flex-direction: column; align-items: center; gap: 0;
+}
+.flow-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 0;
+}
+.flow-arrow {
+  display: flex; justify-content: center; align-items: center;
+  height: 36px; color: var(--muted);
+  font-size: 20px;
+  position: relative;
+}
+.flow-arrow::before {
+  content: '';
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  width: 2px; height: 100%;
+  background: linear-gradient(var(--border), transparent);
+}
+
+.service-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  overflow: hidden;
+}
+.service-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 12px 12px 0 0;
+}
+.service-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--hover-color, var(--blue));
+  box-shadow: 0 16px 48px -8px var(--glow-color, #3b82f622);
+}
+.service-card.active {
+  border-color: var(--hover-color, var(--blue));
+  background: var(--bg3);
+  box-shadow: 0 0 0 1px var(--hover-color, var(--blue)), 0 16px 48px -8px var(--glow-color, #3b82f622);
+}
+.card-icon { font-size: 28px; margin-bottom: 10px; }
+.card-name {
+  font-family: var(--sans);
+  font-weight: 700; font-size: 13px;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+.card-tech {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+.card-port {
+  font-family: var(--mono);
+  font-size: 10px;
+  margin-top: 8px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+/* card color themes */
+.theme-blue   { --hover-color: var(--blue);   --glow-color: #3b82f622; }
+.theme-blue   .service-card::before, .theme-blue::before { background: var(--blue); }
+.theme-cyan   { --hover-color: var(--cyan);   --glow-color: #06b6d422; }
+.theme-cyan   .service-card::before { background: var(--cyan); }
+.theme-green  { --hover-color: var(--green);  --glow-color: #10b98122; }
+.theme-green  .service-card::before { background: var(--green); }
+.theme-orange { --hover-color: var(--orange); --glow-color: #f59e0b22; }
+.theme-orange .service-card::before { background: var(--orange); }
+.theme-purple { --hover-color: var(--purple); --glow-color: #8b5cf622; }
+.theme-purple .service-card::before { background: var(--purple); }
+.theme-red    { --hover-color: var(--red);    --glow-color: #ef444422; }
+.theme-red    .service-card::before { background: var(--red); }
+.theme-teal   { --hover-color: var(--teal);   --glow-color: #14b8a622; }
+.theme-teal   .service-card::before { background: var(--teal); }
+.theme-pink   { --hover-color: var(--pink);   --glow-color: #ec489922; }
+.theme-pink   .service-card::before { background: var(--pink); }
+
+/* ── Detail Panel ── */
+#detail-panel {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  margin-top: 32px;
+  display: none;
+  animation: slideUp 0.3s ease;
+}
+#detail-panel.visible { display: block; }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.detail-header {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 24px;
+}
+.detail-icon { font-size: 40px; }
+.detail-title {
+  font-size: 24px; font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+.detail-block {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+.detail-block-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.detail-item {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex; gap: 8px;
+}
+.detail-item:last-child { border-bottom: none; }
+.detail-item .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+/* ── CQRS Flow ── */
+.cqrs-container {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+}
+@media (max-width: 768px) { .cqrs-container { grid-template-columns: 1fr; } }
+.cqrs-side {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+}
+.cqrs-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 8px;
+}
+.cqrs-item {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; gap: 12px;
+}
+.cqrs-item:hover { border-color: currentColor; transform: translateX(4px); }
+.cqrs-item-name { font-weight: 700; font-size: 13px; }
+.cqrs-item-event {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--muted); margin-top: 2px;
+}
+
+/* ── State Machine ── */
+.state-machine {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  justify-content: center; align-items: center;
+  padding: 40px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  position: relative;
+}
+.state-node {
+  padding: 14px 24px;
+  border-radius: 50px;
+  border: 2px solid;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+}
+.state-node:hover { transform: scale(1.08); }
+.state-node.active { transform: scale(1.12); box-shadow: 0 0 0 4px currentColor33; }
+.state-node.todo       { color: var(--muted); border-color: var(--muted);   background: #1a2235; }
+.state-node.inprogress { color: var(--blue);  border-color: var(--blue);    background: #1e3a5f22; }
+.state-node.review     { color: var(--orange);border-color: var(--orange);  background: #78350f22; }
+.state-node.completed  { color: var(--green); border-color: var(--green);   background: #06402522; }
+.state-node.cancelled  { color: var(--red);   border-color: var(--red);     background: #7f1d1d22; }
+.state-transitions {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-top: 16px;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+.trans-row { display: flex; gap: 8px; align-items: center; padding: 4px 0; }
+.trans-from { color: var(--muted); }
+.trans-arrow { color: var(--cyan); }
+.trans-to { color: var(--text); }
+.trans-blocked { color: var(--red); text-decoration: line-through; opacity: 0.5; }
+
+/* ── Event Bus Timeline ── */
+.event-bus {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  overflow: hidden;
+  position: relative;
+}
+.bus-line {
+  height: 4px;
+  background: linear-gradient(90deg, var(--purple), var(--blue), var(--cyan), var(--green));
+  border-radius: 2px;
+  margin: 24px 0;
+  position: relative;
+}
+.bus-events {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+.bus-event {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  position: relative;
+  cursor: default;
+  transition: all 0.2s;
+}
+.bus-event:hover {
+  border-color: var(--blue);
+  transform: translateY(-3px);
+}
+.bus-event::before {
+  content: '';
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  width: 2px; height: 12px;
+  background: var(--border);
+}
+.event-name {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  color: var(--cyan);
+  margin-bottom: 4px;
+}
+.event-routing {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted);
+}
+.event-consumers {
+  margin-top: 8px;
+  display: flex; gap: 4px; flex-wrap: wrap;
+}
+.consumer-tag {
+  font-family: var(--mono); font-size: 9px;
+  padding: 2px 6px; border-radius: 4px;
+}
+
+/* ── Patterns Grid ── */
+.patterns-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+.pattern-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.25s;
+  cursor: default;
+}
+.pattern-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent, var(--blue));
+  box-shadow: 0 20px 48px -12px var(--glow, #3b82f622);
+}
+.pattern-icon { font-size: 32px; margin-bottom: 12px; }
+.pattern-name {
+  font-weight: 800; font-size: 16px;
+  letter-spacing: -0.5px; margin-bottom: 6px;
+}
+.pattern-desc {
+  font-family: var(--mono);
+  font-size: 11px; color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ── Logging dashboard ── */
+.log-panel {
+  background: #050a0f;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.log-line { display: flex; gap: 12px; padding: 3px 0; }
+.log-time { color: var(--muted); flex-shrink: 0; }
+.log-level { flex-shrink: 0; padding: 0 6px; border-radius: 3px; font-size: 10px; font-weight: 700; }
+.log-level.inf { background: #1e3a5f; color: var(--blue); }
+.log-level.wrn { background: #78350f; color: var(--orange); }
+.log-level.err { background: #7f1d1d; color: var(--red); }
+.log-msg { color: #94a3b8; }
+.log-prop { color: var(--cyan); }
+
+/* ── Footer ── */
+footer {
+  text-align: center;
+  padding: 48px 0 24px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+/* ── Scroll animation ── */
+.fade-in {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <header>
+    <div class="title-eyebrow">Architecture Document · v1.0 · 2025</div>
+    <h1>Task Management<br>System</h1>
+    <div class="subtitle">.NET Core 8 · Angular 17 · CQRS · Microservices · RabbitMQ</div>
+    <div class="tech-pills">
+      <span class="pill pill-blue">.NET 8</span>
+      <span class="pill pill-orange">Angular 17</span>
+      <span class="pill pill-purple">CQRS + MediatR</span>
+      <span class="pill pill-teal">Microservices</span>
+      <span class="pill pill-orange">RabbitMQ</span>
+      <span class="pill pill-cyan">SignalR</span>
+      <span class="pill pill-green">SQL Server + EF Core</span>
+      <span class="pill pill-red">Redis</span>
+      <span class="pill pill-pink">SendGrid</span>
+      <span class="pill pill-purple">Serilog + Seq</span>
+      <span class="pill pill-blue">Docker + K8s</span>
+      <span class="pill pill-teal">JWT + Identity</span>
+    </div>
+  </header>
+
+  <!-- ── SECTION 1: SERVICE MAP ── -->
+  <div class="section fade-in">
+    <div class="section-label">01 — Service Architecture</div>
+    <div class="section-title">Microservices Service Map</div>
+    <p style="color:var(--muted);font-family:var(--mono);font-size:12px;margin-bottom:28px;">Click any service card to expand details →</p>
+
+    <!-- LAYER: CLIENT -->
+    <div class="arch-flow">
+      <div class="flow-row" style="grid-template-columns:1fr;">
+        <div class="theme-orange" onclick="showDetail('angular')">
+          <div class="service-card" id="card-angular">
+            <div class="card-icon">🖥️</div>
+            <div class="card-name">Angular 17 SPA</div>
+            <div class="card-tech">NgRx · Material · SignalR Client</div>
+            <div class="card-port" style="background:#78350f22;color:var(--orange)">:4200</div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-arrow">↓</div>
+
+      <!-- LAYER: GATEWAY -->
+      <div class="flow-row" style="grid-template-columns:1fr;">
+        <div class="theme-blue" onclick="showDetail('gateway')">
+          <div class="service-card" id="card-gateway">
+            <div class="card-icon">🔀</div>
+            <div class="card-name">API Gateway</div>
+            <div class="card-tech">Ocelot · JWT Auth · Rate Limiting</div>
+            <div class="card-port" style="background:#1e3a5f22;color:var(--blue)">:5000</div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-arrow">↓</div>
+
+      <!-- LAYER: MICROSERVICES -->
+      <div class="flow-row">
+        <div class="theme-blue" onclick="showDetail('task')">
+          <div class="service-card" id="card-task">
+            <div class="card-icon">📋</div>
+            <div class="card-name">Task Service</div>
+            <div class="card-tech">.NET 8 · CQRS · EF Core</div>
+            <div class="card-port" style="background:#1e3a5f22;color:var(--blue)">:5001</div>
+          </div>
+        </div>
+        <div class="theme-cyan" onclick="showDetail('user')">
+          <div class="service-card" id="card-user">
+            <div class="card-icon">👤</div>
+            <div class="card-name">User Service</div>
+            <div class="card-tech">.NET 8 · Identity · JWT</div>
+            <div class="card-port" style="background:#0e749022;color:var(--cyan)">:5002</div>
+          </div>
+        </div>
+        <div class="theme-green" onclick="showDetail('notification')">
+          <div class="service-card" id="card-notification">
+            <div class="card-icon">🔔</div>
+            <div class="card-name">Notification Service</div>
+            <div class="card-tech">.NET 8 Worker · SignalR · SendGrid</div>
+            <div class="card-port" style="background:#06402522;color:var(--green)">Worker</div>
+          </div>
+        </div>
+        <div class="theme-purple" onclick="showDetail('audit')">
+          <div class="service-card" id="card-audit">
+            <div class="card-icon">📊</div>
+            <div class="card-name">Audit Service</div>
+            <div class="card-tech">.NET 8 Worker · ChangeLog</div>
+            <div class="card-port" style="background:#6d28d922;color:var(--purple)">Worker</div>
+          </div>
+        </div>
+        <div class="theme-teal" onclick="showDetail('search')">
+          <div class="service-card" id="card-search">
+            <div class="card-icon">🔍</div>
+            <div class="card-name">Search Service</div>
+            <div class="card-tech">.NET 8 · Elasticsearch · NEST</div>
+            <div class="card-port" style="background:#0f766e22;color:var(--teal)">:5003</div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-arrow">↓</div>
+
+      <!-- LAYER: INFRASTRUCTURE -->
+      <div class="flow-row">
+        <div class="theme-orange" onclick="showDetail('rabbit')">
+          <div class="service-card" id="card-rabbit">
+            <div class="card-icon">🐇</div>
+            <div class="card-name">RabbitMQ</div>
+            <div class="card-tech">Topic Exchange · Durable Queues</div>
+            <div class="card-port" style="background:#b4530922;color:var(--orange)">:5672 / :15672</div>
+          </div>
+        </div>
+        <div class="theme-red" onclick="showDetail('sql')">
+          <div class="service-card" id="card-sql">
+            <div class="card-icon">🗄️</div>
+            <div class="card-name">SQL Server</div>
+            <div class="card-tech">Per-service DBs · EF Migrations</div>
+            <div class="card-port" style="background:#7f1d1d22;color:var(--red)">:1433</div>
+          </div>
+        </div>
+        <div class="theme-red" onclick="showDetail('redis')">
+          <div class="service-card" id="card-redis">
+            <div class="card-icon">⚡</div>
+            <div class="card-name">Redis</div>
+            <div class="card-tech">Cache · Session · Rate Limit</div>
+            <div class="card-port" style="background:#7f1d1d22;color:var(--red)">:6379</div>
+          </div>
+        </div>
+        <div class="theme-pink" onclick="showDetail('seq')">
+          <div class="service-card" id="card-seq">
+            <div class="card-icon">📈</div>
+            <div class="card-name">Seq + Serilog</div>
+            <div class="card-tech">Structured Logs · Dashboards · Alerts</div>
+            <div class="card-port" style="background:#be185d22;color:var(--pink)">:5341</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail Panel -->
+    <div id="detail-panel">
+      <div class="detail-header">
+        <div class="detail-icon" id="d-icon">🔵</div>
+        <div>
+          <div class="detail-title" id="d-title">Service</div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--muted)" id="d-tech">Tech stack</div>
+        </div>
+      </div>
+      <div class="detail-grid" id="d-grid"></div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 2: CQRS ── -->
+  <div class="section fade-in">
+    <div class="section-label">02 — Design Pattern</div>
+    <div class="section-title">CQRS with MediatR</div>
+    <div class="cqrs-container">
+      <div class="cqrs-side">
+        <div class="cqrs-title" style="color:var(--blue)">⚙ Commands (Write)</div>
+        <div class="cqrs-item" style="color:var(--blue);border-color:#1e3a5f">
+          <span>📝</span>
+          <div><div class="cqrs-item-name">CreateTaskCommand</div><div class="cqrs-item-event">→ TaskCreatedEvent</div></div>
+        </div>
+        <div class="cqrs-item" style="color:var(--blue);border-color:#1e3a5f">
+          <span>✏️</span>
+          <div><div class="cqrs-item-name">UpdateTaskCommand</div><div class="cqrs-item-event">→ TaskUpdatedEvent</div></div>
+        </div>
+        <div class="cqrs-item" style="color:var(--orange);border-color:#78350f">
+          <span>🔄</span>
+          <div><div class="cqrs-item-name">ChangeTaskStatusCommand</div><div class="cqrs-item-event">→ TaskStatusChangedEvent</div></div>
+        </div>
+        <div class="cqrs-item" style="color:var(--cyan);border-color:#0e7490">
+          <span>👤</span>
+          <div><div class="cqrs-item-name">AssignTaskCommand</div><div class="cqrs-item-event">→ TaskAssignedEvent</div></div>
+        </div>
+        <div class="cqrs-item" style="color:var(--green);border-color:#047857">
+          <span>➕</span>
+          <div><div class="cqrs-item-name">AddSubtaskCommand</div><div class="cqrs-item-event">→ SubtaskAddedEvent</div></div>
+        </div>
+        <div class="cqrs-item" style="color:var(--purple);border-color:#6d28d9">
+          <span>💬</span>
+          <div><div class="cqrs-item-name">AddCommentCommand</div><div class="cqrs-item-event">→ CommentAddedEvent</div></div>
+        </div>
+      </div>
+      <div class="cqrs-side">
+        <div class="cqrs-title" style="color:var(--green)">🔎 Queries (Read)</div>
+        <div class="cqrs-item" style="color:var(--green);border-color:#047857">
+          <span>📄</span>
+          <div><div class="cqrs-item-name">GetTaskByIdQuery</div><div class="cqrs-item-event">→ TaskDetailDto</div></div>
+        </div>
+        <div class="cqrs-item" style="color:var(--green);border-color:#047857">
+          <span>🔍</span>
+          <div><div class="cqrs-item-name">SearchTasksQuery</div><div class="cqrs-item-event">→ PagedResult&lt;TaskSummaryDto&gt;</div></div>
+        </div>
+        <div class="cqrs-item" style="color:var(--green);border-color:#047857">
+          <span>🌳</span>
+          <div><div class="cqrs-item-name">GetSubtasksQuery</div><div class="cqrs-item-event">→ List&lt;TaskSummaryDto&gt;</div></div>
+        </div>
+        <div class="cqrs-item" style="color:var(--teal);border-color:#0f766e">
+          <span>📋</span>
+          <div><div class="cqrs-item-name">GetTaskHistoryQuery</div><div class="cqrs-item-event">→ List&lt;TaskChangeLogDto&gt;</div></div>
+        </div>
+        <div class="cqrs-item" style="color:var(--teal);border-color:#0f766e">
+          <span>📊</span>
+          <div><div class="cqrs-item-name">GetAdminMetricsQuery</div><div class="cqrs-item-event">→ AdminMetricsDto</div></div>
+        </div>
+        <div class="cqrs-item" style="color:var(--teal);border-color:#0f766e">
+          <span>💬</span>
+          <div><div class="cqrs-item-name">GetTaskCommentsQuery</div><div class="cqrs-item-event">→ List&lt;CommentDto&gt;</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;">
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:16px;">MediatR Pipeline Behaviors (applied to all requests)</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <span style="background:#1e3a5f22;border:1px solid #1e3a5f;border-radius:6px;padding:6px 14px;font-family:var(--mono);font-size:11px;color:var(--blue)">📝 LoggingBehavior</span>
+        <span style="font-family:var(--mono);font-size:18px;color:var(--muted)">→</span>
+        <span style="background:#78350f22;border:1px solid #78350f;border-radius:6px;padding:6px 14px;font-family:var(--mono);font-size:11px;color:var(--orange)">✅ ValidationBehavior (FluentValidation)</span>
+        <span style="font-family:var(--mono);font-size:18px;color:var(--muted)">→</span>
+        <span style="background:#6d28d922;border:1px solid #6d28d9;border-radius:6px;padding:6px 14px;font-family:var(--mono);font-size:11px;color:var(--purple)">⚡ CachingBehavior (Redis)</span>
+        <span style="font-family:var(--mono);font-size:18px;color:var(--muted)">→</span>
+        <span style="background:#06402522;border:1px solid #047857;border-radius:6px;padding:6px 14px;font-family:var(--mono);font-size:11px;color:var(--green)">⚙ Handler</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 3: STATE MACHINE ── -->
+  <div class="section fade-in">
+    <div class="section-label">03 — State Pattern</div>
+    <div class="section-title">Task Workflow State Machine</div>
+
+    <div class="state-machine">
+      <div onclick="selectState('todo')" class="state-node todo" id="sn-todo">TODO</div>
+      <div style="color:var(--muted);font-size:20px">→</div>
+      <div onclick="selectState('inprogress')" class="state-node inprogress" id="sn-inprogress">IN_PROGRESS</div>
+      <div style="color:var(--muted);font-size:20px">→</div>
+      <div onclick="selectState('review')" class="state-node review" id="sn-review">REVIEW</div>
+      <div style="color:var(--muted);font-size:20px">→</div>
+      <div onclick="selectState('completed')" class="state-node completed" id="sn-completed">COMPLETED</div>
+      <div style="color:var(--muted);font-size:20px;margin-left:8px">|</div>
+      <div onclick="selectState('cancelled')" class="state-node cancelled" id="sn-cancelled">CANCELLED</div>
+    </div>
+
+    <div class="state-transitions" id="state-detail" style="display:none"></div>
+  </div>
+
+  <!-- ── SECTION 4: EVENT BUS ── -->
+  <div class="section fade-in">
+    <div class="section-label">04 — Messaging</div>
+    <div class="section-title">RabbitMQ Event Bus</div>
+    <div class="event-bus">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;">task-events  ·  Topic Exchange</div>
+      <div class="bus-line"></div>
+      <div class="bus-events">
+        <div class="bus-event">
+          <div class="event-name">task.created</div>
+          <div class="event-routing">routing: task.created</div>
+          <div class="event-consumers">
+            <span class="consumer-tag" style="background:#06402522;color:var(--green)">notif</span>
+            <span class="consumer-tag" style="background:#6d28d922;color:var(--purple)">audit</span>
+          </div>
+        </div>
+        <div class="bus-event">
+          <div class="event-name">task.updated</div>
+          <div class="event-routing">routing: task.updated</div>
+          <div class="event-consumers">
+            <span class="consumer-tag" style="background:#06402522;color:var(--green)">notif</span>
+            <span class="consumer-tag" style="background:#6d28d922;color:var(--purple)">audit</span>
+          </div>
+        </div>
+        <div class="bus-event">
+          <div class="event-name">task.status-changed</div>
+          <div class="event-routing">routing: task.status.*</div>
+          <div class="event-consumers">
+            <span class="consumer-tag" style="background:#06402522;color:var(--green)">notif</span>
+            <span class="consumer-tag" style="background:#6d28d922;color:var(--purple)">audit</span>
+          </div>
+        </div>
+        <div class="bus-event">
+          <div class="event-name">task.assigned</div>
+          <div class="event-routing">routing: task.assigned</div>
+          <div class="event-consumers">
+            <span class="consumer-tag" style="background:#06402522;color:var(--green)">notif</span>
+            <span class="consumer-tag" style="background:#6d28d922;color:var(--purple)">audit</span>
+          </div>
+        </div>
+        <div class="bus-event">
+          <div class="event-name">comment.added</div>
+          <div class="event-routing">routing: task.comment.*</div>
+          <div class="event-consumers">
+            <span class="consumer-tag" style="background:#06402522;color:var(--green)">notif</span>
+          </div>
+        </div>
+        <div class="bus-event">
+          <div class="event-name">task.subscribed</div>
+          <div class="event-routing">routing: task.sub.*</div>
+          <div class="event-consumers">
+            <span class="consumer-tag" style="background:#06402522;color:var(--green)">notif</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 5: DESIGN PATTERNS ── -->
+  <div class="section fade-in">
+    <div class="section-label">05 — Design Patterns Used</div>
+    <div class="section-title">Architecture Patterns</div>
+    <div class="patterns-grid">
+      <div class="pattern-card" style="--accent:var(--blue);--glow:#3b82f622">
+        <div class="pattern-icon">📨</div>
+        <div class="pattern-name" style="color:var(--blue)">CQRS</div>
+        <div class="pattern-desc">Commands for writes, Queries for reads. MediatR dispatches to dedicated handlers with pipeline behaviors for logging, validation & caching.</div>
+      </div>
+      <div class="pattern-card" style="--accent:var(--orange);--glow:#f59e0b22">
+        <div class="pattern-icon">🔄</div>
+        <div class="pattern-name" style="color:var(--orange)">State Pattern</div>
+        <div class="pattern-desc">Each TaskStatus has a concrete state class defining allowed transitions. InvalidStateTransitionException enforces business rules at domain level.</div>
+      </div>
+      <div class="pattern-card" style="--accent:var(--green);--glow:#10b98122">
+        <div class="pattern-icon">🎯</div>
+        <div class="pattern-name" style="color:var(--green)">Strategy Pattern</div>
+        <div class="pattern-desc">ITaskSortingStrategy with Priority, DueDate, CreatedDate, Alphabetic, and Assignee strategies. Runtime selection via TaskSortingContext.</div>
+      </div>
+      <div class="pattern-card" style="--accent:var(--purple);--glow:#8b5cf622">
+        <div class="pattern-icon">👁️</div>
+        <div class="pattern-name" style="color:var(--purple)">Observer Pattern</div>
+        <div class="pattern-desc">Domain events + MediatR INotificationHandlers + SignalR Hub. Multiple subscribers react to the same event independently.</div>
+      </div>
+      <div class="pattern-card" style="--accent:var(--cyan);--glow:#06b6d422">
+        <div class="pattern-icon">🗂️</div>
+        <div class="pattern-name" style="color:var(--cyan)">Repository Pattern</div>
+        <div class="pattern-desc">ITaskRepository, IUserRepository abstractions over EF Core. Enables unit testing with mock repositories and future DB swap.</div>
+      </div>
+      <div class="pattern-card" style="--accent:var(--teal);--glow:#14b8a622">
+        <div class="pattern-icon">🌳</div>
+        <div class="pattern-name" style="color:var(--teal)">Composite Pattern</div>
+        <div class="pattern-desc">TaskEntity holds a recursive List&lt;TaskEntity&gt; subtasks. GetAllSubtasks() traverses the full hierarchy. UpdateSubtaskPriorities() propagates upward.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SECTION 6: LOGGING SAMPLE ── -->
+  <div class="section fade-in">
+    <div class="section-label">06 — Structured Logging</div>
+    <div class="section-title">Serilog + Seq Log Stream</div>
+    <div class="log-panel">
+      <div class="log-line"><span class="log-time">10:24:01.231</span><span class="log-level inf">INF</span><span class="log-msg">Handling <span class="log-prop">CreateTaskCommand</span> {"Title":"Fix login bug","Priority":"HIGH","CreatorId":3,"CorrelationId":"a1b2c3"}</span></div>
+      <div class="log-line"><span class="log-time">10:24:01.284</span><span class="log-level inf">INF</span><span class="log-msg">Handled <span class="log-prop">CreateTaskCommand</span> in <span class="log-prop">53ms</span> ResultId=42</span></div>
+      <div class="log-line"><span class="log-time">10:24:01.301</span><span class="log-level inf">INF</span><span class="log-msg">Published <span class="log-prop">TaskCreatedEvent</span> to RabbitMQ exchange=task-events routing=task.created</span></div>
+      <div class="log-line"><span class="log-time">10:24:01.445</span><span class="log-level inf">INF</span><span class="log-msg">Email sent to <span class="log-prop">alice@example.com</span> template=task-created TaskId=42</span></div>
+      <div class="log-line"><span class="log-time">10:24:01.450</span><span class="log-level inf">INF</span><span class="log-msg">SignalR broadcast <span class="log-prop">TaskCreated</span> group=task-42 connections=3</span></div>
+      <div class="log-line"><span class="log-time">10:24:05.112</span><span class="log-level wrn">WRN</span><span class="log-msg">Invalid state transition <span class="log-prop">TODO → COMPLETED</span> TaskId=42 UserId=7 — blocked by TodoState</span></div>
+      <div class="log-line"><span class="log-time">10:24:09.883</span><span class="log-level inf">INF</span><span class="log-msg">Handling <span class="log-prop">ChangeTaskStatusCommand</span> TaskId=42 NewStatus=IN_PROGRESS UserId=3</span></div>
+      <div class="log-line"><span class="log-time">10:24:09.921</span><span class="log-level inf">INF</span><span class="log-msg">Task status changed <span class="log-prop">TODO → IN_PROGRESS</span> TaskId=42 duration=38ms</span></div>
+      <div class="log-line"><span class="log-time">10:24:09.940</span><span class="log-level inf">INF</span><span class="log-msg">Audit log entry created ChangeType=<span class="log-prop">STATUS_CHANGED</span> TaskId=42 UserId=3</span></div>
+      <div class="log-line"><span class="log-time">10:24:11.002</span><span class="log-level err">ERR</span><span class="log-msg">Email delivery failed recipient=bob@example.com error="Rate limit exceeded" TaskId=42 — queued for retry</span></div>
+    </div>
+  </div>
+
+  <footer>Task Management System · .NET Core 8 + Angular 17 · Architecture v1.0 · 2025</footer>
+</div>
+
+<script>
+// ── Service Detail Data ──
+const details = {
+  angular: {
+    icon: '🖥️', title: 'Angular 17 SPA', tech: 'Angular 17 · NgRx · Angular Material · SignalR Client · JWT',
+    blocks: [
+      { title: 'Feature Modules', color: '#f59e0b', items: ['auth — Login, Register, JWT refresh','tasks — List, Detail, Form, Subtree','admin — Dashboard, Users, Audit, Metrics','notifications — Bell, List, SignalR'] },
+      { title: 'State Management', color: '#8b5cf6', items: ['NgRx Store with actions, reducers, effects','TaskEffects → API calls on commands','SignalR push → dispatch(addNotification)','Selectors for memoized derived state'] },
+      { title: 'Admin Panel', color: '#06b6d4', items: ['KPI cards: total tasks, by status, overdue','Line charts: tasks created over time','User management: create, edit, deactivate','Paginated audit log with filters'] },
+      { title: 'Guards & Interceptors', color: '#10b981', items: ['AuthGuard: redirect if not logged in','RoleGuard: block /admin from USER role','JwtInterceptor: auto-attach Bearer token','ErrorInterceptor: global 401/403 handling'] },
+    ]
+  },
+  gateway: {
+    icon: '🔀', title: 'API Gateway (Ocelot)', tech: 'Ocelot · JWT Validation · Rate Limiting · Load Balancing',
+    blocks: [
+      { title: 'Routing Rules', color: '#3b82f6', items: ['/api/tasks/* → TaskService :5001','/api/users/* → UserService :5002','/api/search/* → SearchService :5003','/hubs/* → NotificationService SignalR'] },
+      { title: 'Cross-Cutting', color: '#f59e0b', items: ['JWT token validation (shared secret)','Rate limiting: 100 req/min per user','Request/response transformation','Correlation ID injection'] },
+    ]
+  },
+  task: {
+    icon: '📋', title: 'Task Service', tech: '.NET Core 8 Web API · CQRS · MediatR · EF Core · SQL Server',
+    blocks: [
+      { title: 'Domain Layer', color: '#3b82f6', items: ['TaskEntity with domain events','Priority enum: LOW/MEDIUM/HIGH/URGENT','TaskStatus enum + State classes','Subtask recursive tree structure'] },
+      { title: 'Application Layer', color: '#8b5cf6', items: ['8 Commands + 7 Queries','MediatR handlers with FluentValidation','Pipeline: Logging → Validation → Cache → Handler','ITaskRepository, IUserRepository interfaces'] },
+      { title: 'Infrastructure', color: '#10b981', items: ['EF Core DbContext with migrations','TaskRepositoryImpl (SQL Server)','RabbitMqEventPublisher','Redis distributed cache'] },
+      { title: 'API Layer', color: '#f59e0b', items: ['TasksController (thin, delegates to mediator)','AdminController (ADMIN role required)','Global exception middleware','Swagger / OpenAPI docs'] },
+    ]
+  },
+  user: {
+    icon: '👤', title: 'User Service', tech: '.NET Core 8 · ASP.NET Core Identity · JWT · SQL Server',
+    blocks: [
+      { title: 'Endpoints', color: '#06b6d4', items: ['POST /auth/register','POST /auth/login → JWT + refresh token','POST /auth/refresh','GET /users/{id} (admin only)'] },
+      { title: 'Security', color: '#ef4444', items: ['ASP.NET Core Identity for password hashing','RS256 JWT with 15min expiry','Refresh token rotation (stored in Redis)','Role claims: USER, ADMIN in JWT'] },
+    ]
+  },
+  notification: {
+    icon: '🔔', title: 'Notification Service', tech: '.NET Core 8 Worker · RabbitMQ Consumer · SignalR · SendGrid',
+    blocks: [
+      { title: 'Event Consumers', color: '#10b981', items: ['TaskCreatedEvent → email + SignalR','TaskAssignedEvent → email to new assignee','TaskStatusChangedEvent → all subscribers','CommentAddedEvent → all subscribers'] },
+      { title: 'Channels', color: '#f59e0b', items: ['SendGrid: HTML templated emails','SignalR Hub: real-time browser push','Notification persistence to SQL Server','Failed delivery: Polly retry + dead-letter queue'] },
+    ]
+  },
+  audit: {
+    icon: '📊', title: 'Audit Service', tech: '.NET Core 8 Worker · RabbitMQ Consumer · EF Core',
+    blocks: [
+      { title: 'Change Log Entries', color: '#8b5cf6', items: ['CREATED: taskId, creatorId, title','UPDATED: old/new values, updatedBy','STATUS_CHANGED: oldStatus, newStatus','ASSIGNED: oldAssignee, newAssignee','PRIORITY_CHANGED: old/new priority'] },
+      { title: 'Admin Queries', color: '#06b6d4', items: ['GetTaskHistoryQuery → paginated log','GetAdminAuditLogQuery → all tasks filtered','Export to CSV (planned)','Retention policy: 2 years'] },
+    ]
+  },
+  search: {
+    icon: '🔍', title: 'Search Service', tech: '.NET Core 8 Web API · Elasticsearch 8 · NEST Client',
+    blocks: [
+      { title: 'Search Filters', color: '#14b8a6', items: ['assigneeId, creatorId optional filters','priority, status optional filters','Due date range filter','Tag-based filtering','Full-text on title + description'] },
+      { title: 'Sorting Strategies', color: '#3b82f6', items: ['PrioritySortingStrategy (URGENT first)','DueDateSortingStrategy (earliest first)','CreatedDateSortingStrategy (newest first)','AlphabeticSortingStrategy (A→Z)'] },
+    ]
+  },
+  rabbit: {
+    icon: '🐇', title: 'RabbitMQ', tech: 'RabbitMQ 3.12 · Management UI · Durable Queues · Topic Exchange',
+    blocks: [
+      { title: 'Exchange Config', color: '#f59e0b', items: ['Exchange: task-events (type: topic)','Durable: true, AutoDelete: false','notification-queue (binds task.*)','audit-queue (binds task.*)'] },
+      { title: 'Reliability', color: '#ef4444', items: ['Messages persisted to disk','Publisher confirms enabled','Consumer manual ACK','Dead-letter exchange for failed msgs','Polly retry: 3 attempts, exponential backoff'] },
+    ]
+  },
+  sql: {
+    icon: '🗄️', title: 'SQL Server', tech: 'SQL Server 2022 · EF Core 8 · Code-First Migrations',
+    blocks: [
+      { title: 'Databases', color: '#ef4444', items: ['TaskDb: Tasks, Comments, ChangeLogs, Subscriptions','UserDb: Users, Roles, RefreshTokens','NotificationDb: Notifications, Templates','AuditDb: AuditLogs (append-only)'] },
+    ]
+  },
+  redis: {
+    icon: '⚡', title: 'Redis', tech: 'Redis 7 · StackExchange.Redis · IDistributedCache',
+    blocks: [
+      { title: 'Use Cases', color: '#ef4444', items: ['Query result caching (GetTaskById, SearchTasks)','JWT refresh token storage','Rate limiting counters (per user/IP)','SignalR backplane for multi-instance deployment','Session storage for admin panel'] },
+    ]
+  },
+  seq: {
+    icon: '📈', title: 'Serilog + Seq', tech: 'Serilog 3.x · Seq · Structured JSON Logging',
+    blocks: [
+      { title: 'Log Levels', color: '#ec4899', items: ['INF: Command/Query handled, emails sent','WRN: Invalid state transitions, slow queries','ERR: Unhandled exceptions, email failures','DBG: EF Core SQL queries (dev only)'] },
+      { title: 'Enrichers', color: '#8b5cf6', items: ['FromLogContext() — scoped properties','WithMachineName() — for K8s pod identity','WithEnvironmentName() — dev/staging/prod','CorrelationId — trace across services'] },
+    ]
+  },
+};
+
+function showDetail(key) {
+  // deactivate all cards
+  document.querySelectorAll('.service-card').forEach(c => c.classList.remove('active'));
+  const d = details[key];
+  if (!d) return;
+  document.getElementById('card-' + key)?.classList.add('active');
+
+  const panel = document.getElementById('detail-panel');
+  document.getElementById('d-icon').textContent = d.icon;
+  document.getElementById('d-title').textContent = d.title;
+  document.getElementById('d-tech').textContent = d.tech;
+
+  const grid = document.getElementById('d-grid');
+  grid.innerHTML = d.blocks.map(b => `
+    <div class="detail-block">
+      <div class="detail-block-title">${b.title}</div>
+      ${b.items.map(item => `
+        <div class="detail-item">
+          <div class="dot" style="background:${b.color}"></div>
+          <span>${item}</span>
+        </div>`).join('')}
+    </div>`).join('');
+
+  panel.classList.add('visible');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ── State Machine ──
+const stateData = {
+  todo:       { label: 'TODO',        allowed: ['IN_PROGRESS','CANCELLED'],     blocked: ['REVIEW','COMPLETED'] },
+  inprogress: { label: 'IN_PROGRESS', allowed: ['REVIEW','CANCELLED'],          blocked: ['TODO','COMPLETED'] },
+  review:     { label: 'REVIEW',      allowed: ['COMPLETED','IN_PROGRESS'],     blocked: ['TODO','CANCELLED'] },
+  completed:  { label: 'COMPLETED',   allowed: ['IN_PROGRESS (reopen)'],        blocked: ['TODO','REVIEW','CANCELLED'] },
+  cancelled:  { label: 'CANCELLED',   allowed: ['TODO (reactivate)'],           blocked: ['IN_PROGRESS','REVIEW','COMPLETED'] },
+};
+
+function selectState(key) {
+  document.querySelectorAll('.state-node').forEach(n => n.classList.remove('active'));
+  document.getElementById('sn-' + key)?.classList.add('active');
+  const s = stateData[key];
+  const detail = document.getElementById('state-detail');
+  detail.style.display = 'block';
+  detail.innerHTML = `
+    <div style="margin-bottom:12px;font-size:13px;font-weight:700;color:var(--text)">State: ${s.label}</div>
+    <div style="margin-bottom:8px;color:var(--muted);font-size:10px;letter-spacing:2px;text-transform:uppercase">Allowed Transitions</div>
+    ${s.allowed.map(t => `<div class="trans-row"><span class="trans-from">${s.label}</span><span class="trans-arrow"> → </span><span class="trans-to" style="color:var(--green)">${t}</span></div>`).join('')}
+    <div style="margin:12px 0 8px;color:var(--muted);font-size:10px;letter-spacing:2px;text-transform:uppercase">Blocked Transitions (throws InvalidStateTransitionException)</div>
+    ${s.blocked.map(t => `<div class="trans-row"><span class="trans-from">${s.label}</span><span class="trans-arrow"> → </span><span class="trans-blocked">${t}</span></div>`).join('')}
+  `;
+}
+
+// ── Scroll fade-in ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
