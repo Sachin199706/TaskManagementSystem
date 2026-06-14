@@ -1,1 +1,92 @@
-<h2>Hellogdg</h2>
+@if (showNav) {
+<div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
+        <div class="sidebar-logo">
+                <!-- <span class="logo-icon">📋</span> -->
+                <i class="fa-solid fa-list-check logo-icon"></i>
+            @if (!sidebarCollapsed) { <span class="logo-text">TaskManager</span> }
+        </div>
+
+        <nav class="sidebar-nav">
+            <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+                <!-- <span class="nav-icon">📊</span> -->
+                <i class="fa-solid fa-chart-column nav-icon"></i>
+                @if (!sidebarCollapsed) { <span>Dashboard</span> }
+            </a>
+            <a routerLink="/tasks" routerLinkActive="active" class="nav-item">
+                <!-- <span class="nav-icon">📋</span> -->
+                <i class="fa-solid fa-list nav-icon"></i>
+                @if (!sidebarCollapsed) { <span>My Tasks</span> }
+            </a>
+            <a routerLink="/tasks/new" routerLinkActive="active" class="nav-item">
+                <!-- <span class="nav-icon">➕</span> -->
+                <i class="fa-solid fa-plus nav-icon"></i>
+                @if (!sidebarCollapsed) { <span>New Task</span> }
+            </a>
+       
+            @if (auth.isAdmin()) {
+            <div class="nav-divider"></div>
+            @if (!sidebarCollapsed) { <span class="nav-section-label">Admin</span> }
+            <a routerLink="/admin" routerLinkActive="active" class="nav-item">
+                <!-- <span class="nav-icon">🛠</span> -->
+                <i class="fa-solid fa-wrench nav-icon"></i>
+                @if (!sidebarCollapsed) { <span>Dashboard</span> }
+            </a>
+            <a routerLink="/admin/users" routerLinkActive="active" class="nav-item">
+                <!-- <span class="nav-icon">👥</span> -->
+                <i class="fa-solid fa-users nav-icon"></i>
+                @if (!sidebarCollapsed) { <span>Users</span> }
+            </a>
+            <a routerLink="/admin/audit" routerLinkActive="active" class="nav-item">
+                <!-- <span class="nav-icon">📋</span> -->
+                <i class="fa-solid fa-file-alt nav-icon"></i>
+                @if (!sidebarCollapsed) { <span>Audit Log</span> }
+            </a>
+        }
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="collapse-btn" (click)="sidebarCollapsed = !sidebarCollapsed"
+                [title]="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+                {{ sidebarCollapsed ? '→' : '←' }}
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="main-area">
+        <header class="topbar">
+            <div class="topbar-left">
+                <h2 class="page-title">{{ currentTitle }}</h2>
+            </div>
+            <div class="topbar-right">
+                <app-notification-bell/>
+         <div class="user-chip" (click)="userMenuOpen = !userMenuOpen">
+                    <div class="avatar">{{ initials }}</div>
+                    <span>{{ auth.currentUser()?.displayName }}</span>
+                    <span class="chevron">▾</span>
+                </div>
+                @if (userMenuOpen) {
+                <div class="user-menu">
+                    <div class="user-menu-header">
+                        <strong>{{ auth.currentUser()?.displayName }}</strong>
+                        <span class="role-badge">{{ auth.currentUser()?.role }}</span>
+                    </div>
+                    <button class="user-menu-item danger" (click)="logout()">🚪 Sign Out</button>
+                </div>
+                }
+            </div>
+        </header>
+
+        <main class="main-content">
+            <router-outlet />
+        </main>
+    </div>
+</div>
+} @else {
+<router-outlet />
+}
+
+<!-- Global toast notifications -->
+ <app-toast-container /> 
