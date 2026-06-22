@@ -1,0 +1,59 @@
+<div class="dashboard">
+    <div class="welcome-banner">
+        <div class="welcome-text">
+            <h1>Good {{ greeting }}, {{ auth.iobjCurrentUser()?.displayName }} <i class="fa-solid fa-hand"></i></h1>
+            <p>Here's what's happening with your tasks today.</p>
+        </div>
+        <a class="btn-new-task" routerLink="/tasks/new"><i class="fa-solid fa-plus"></i> New Task</a>
+    </div>
+
+    <div class="stats-row">
+        <div class="stat-card stat-blue">
+            <div class="stat-num">{{ myTasks.length }}</div>
+            <div class="stat-label">My Tasks</div>
+        </div>
+        <div class="stat-card stat-orange">
+            <div class="stat-num">{{ inProgress }}</div>
+            <div class="stat-label">In Progress</div>
+        </div>
+        <div class="stat-card stat-yellow">
+            <div class="stat-num">{{ inReview }}</div>
+            <div class="stat-label">In Review</div>
+        </div>
+        <div class="stat-card stat-red">
+            <div class="stat-num">{{ overdue }}</div>
+            <div class="stat-label">Overdue</div>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <div class="section-header">
+            <h2>Recent Tasks</h2>
+            <a routerLink="/tasks" class="view-all">View all →</a>
+        </div>
+        @if (loading$ | async) {
+        <div class="loading">Loading...</div>
+        } @else {
+        <div class="recent-list">
+            @for (task of myTasks.slice(0, 6); track task.id) {
+            <a class="recent-item" [routerLink]="['/tasks', task.id]">
+                <div class="ri-left">
+                    <div class="ri-priority" [class]="'prio-' + task.priority.toLowerCase()"></div>
+                    <span class="ri-title">{{ task.title }}</span>
+                </div>
+                <div class="ri-right">
+                    <span class="ri-status" [class]="'status-' + task.status.toLowerCase()">
+                        {{ formatStatus(task.status) }}
+                    </span>
+                    <span class="ri-due" [class.ri-overdue]="isOverdue(task.dueDate)">
+                        {{ task.dueDate | date:'MMM d' }}
+                    </span>
+                </div>
+            </a>
+            } @empty {
+            <div class="empty">No tasks yet. <a routerLink="/tasks/new">Create one →</a></div>
+            }
+        </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,86 @@
+<div class="form-container">
+    <div class="form-header">
+        <a class="back-link" routerLink="/tasks">← Back to Tasks</a>
+        <h1>{{ isEdit ? 'Edit Task' : (isSubtask ? 'Add Subtask' : 'Create New Task') }}</h1>
+        @if (isSubtask) {
+        <p class="subtitle">Subtask of Task #{{ parentId }}</p>
+        }
+    </div>
+
+    <div class="form-card">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+            <div class="form-grid">
+                <!-- Title -->
+                <div class="form-group full-width">
+                    <label>Title <span class="required">*</span></label>
+                    <input formControlName="title" type="text" placeholder="Task title..."
+                        [class.error]="invalid('title')" />
+                    @if (invalid('title')) {
+                    <span class="error-msg">Title is required (max 200 chars)</span>
+                    }
+                </div>
+
+                <!-- Priority -->
+                <div class="form-group">
+                    <label>Priority <span class="required">*</span></label>
+                    <div class="priority-selector">
+                        @for (p of priorities; track p.value) {
+                        <button type="button" class="priority-btn"
+                            [class.selected]="form.get('priority')?.value === p.value"
+                            [class]="'priority-btn prio-' + p.value.toLowerCase() + (form.get('priority')?.value === p.value ? ' selected' : '')"
+                            (click)="form.get('priority')?.setValue(p.value)">
+                            {{ p.icon }} {{ p.label }}
+                        </button>
+                        }
+                    </div>
+                </div>
+
+                <!-- Due Date -->
+                <div class="form-group">
+                    <label>Due Date <span class="required">*</span></label>
+                    <input formControlName="dueDate" type="date" [class.error]="invalid('dueDate')" />
+                    @if (invalid('dueDate')) {
+                    <span class="error-msg">Due date is required</span>
+                    }
+                </div>
+
+                <!-- Tags -->
+                <div class="form-group full-width">
+                    <label>Tags</label>
+                    <div class="tags-input-wrapper">
+                        @for (tag of tags; track tag) {
+                        <span class="tag">{{ tag }}
+                            <button type="button" (click)="removeTag(tag)">×</button>
+                        </span>
+                        }
+                        <input type="text" [(ngModel)]="tagInput" [ngModelOptions]="{standalone:true}"
+                            placeholder="Add tag and press Enter" (keydown.enter)="addTag($event)" />
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group full-width">
+                    <label>Description</label>
+                    <textarea formControlName="description" rows="5"
+                        placeholder="Describe the task in detail..."></textarea>
+                </div>
+            </div>
+
+            @if (errorMsg) {
+            <div class="alert alert-error">{{ errorMsg }}</div>
+            }
+            @if (successMsg) {
+            <div class="alert alert-success">{{ successMsg }}</div>
+            }
+
+            <div class="form-actions">
+                <a class="btn btn-outline" routerLink="/tasks">Cancel</a>
+                <button type="submit" class="btn btn-primary" [disabled]="loading">
+                    @if (loading) { <span class="spinner"></span> }
+                    {{ isEdit ? 'Save Changes' : 'Create Task' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

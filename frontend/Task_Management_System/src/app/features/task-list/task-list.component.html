@@ -1,0 +1,111 @@
+<div class="task-list-container">
+    <!-- ── Header ── -->
+    <div class="page-header">
+        <h1>My Tasks</h1>
+        <button class="btn btn-primary" routerLink="/tasks/new">+ New Task</button>
+    </div>
+
+    <!-- ── Search & Filter Bar ── -->
+    <div class="filter-bar">
+        <input class="search-input" placeholder="Search tasks..." [(ngModel)]="searchTitle"
+            (ngModelChange)="onSearchChange()" />
+
+        <select class="filter-select" [(ngModel)]="filterStatus" (change)="applyFilters()">
+            <option value="">All Statuses</option>
+            <option value="Todo">Todo</option>
+            <option value="InProgress">In Progress</option>
+            <option value="Review">Review</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+        </select>
+
+        <select class="filter-select" [(ngModel)]="filterPriority" (change)="applyFilters()">
+            <option value="">All Priorities</option>
+            <option value="Urgent">Urgent</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+        </select>
+
+        <select class="filter-select" [(ngModel)]="sortBy" (change)="applyFilters()">
+            <option value="priority">Sort: Priority</option>
+            <option value="dueDate">Sort: Due Date</option>
+            <option value="createdDate">Sort: Created</option>
+            <option value="title">Sort: Title</option>
+        </select>
+
+        <button class="btn btn-outline" [class.active]="sortDir === 'asc'" (click)="toggleSortDir()">
+            {{ sortDir === 'desc' ? '↓ Desc' : '↑ Asc' }}
+        </button>
+    </div>
+
+    <!-- ── Loading ── -->
+    @if (loading$ | async) {
+    <div class="loading-bar"></div>
+    }
+
+    <!-- ── Task Grid ── -->
+    <div class="task-grid">
+        @for (task of tasks$ | async; track task.id) {
+        <div class="task-card" [class]="'priority-' + task.priority.toLowerCase()" routerLink="/tasks/{{ task.id }}">
+            <div class="task-card-header">
+                <span class="priority-badge badge-{{ task.priority.toLowerCase() }}">
+                    {{ task.priority }}
+                </span>
+                <span class="status-badge badge-status-{{ task.status.toLowerCase() }}">
+                    {{ formatStatus(task.status) }}
+                </span>
+            </div>
+
+            <h3 class="task-title">{{ task.title }}</h3>
+
+            <div class="task-meta">
+                <span class="due-date" [class.overdue]="isOverdue(task.dueDate)">
+                    📅 {{ task.dueDate | date:'MMM d, y' }}
+                </span>
+                @if (task.hasSubtasks) {
+                <span class="subtask-count">🌳 {{ task.subtaskCount }} subtasks</span>
+                }
+            </div>
+
+            <div class="task-actions" (click)="$event.stopPropagation()">
+                <button class="btn-icon" title="Change Status" (click)="openStatusModal(task)">⟳</button>
+                <button class="btn-icon" title="Edit" [routerLink]="['/tasks', task.id, 'edit']">✏️</button>
+            </div>
+        </div>
+        } @empty {
+        <div class="empty-state">
+            <p>No tasks found. <a routerLink="/tasks/new">Create your first task</a></p>
+        </div>
+        }
+    </div>
+
+    <!-- ── Pagination ── -->
+    @if (pagination$ | async; as p) {
+    @if (p.total > p.pageSize) {
+    <div class="pagination">
+        <button class="btn btn-sm" [disabled]="p.page === 1" (click)="goToPage(p.page - 1)">← Prev</button>
+        <span class="page-info">Page {{ p.page }} of {{ Math.ceil(p.total / p.pageSize) }}</span>
+        <button class="btn btn-sm" [disabled]="p.page * p.pageSize >= p.total" (click)="goToPage(p.page + 1)">Next
+            →</button>
+    </div>
+    }
+    }
+
+    <!-- ── Status Change Modal ── -->
+    @if (statusModalTask) {
+    <div class="modal-overlay" (click)="closeStatusModal()">
+        <div class="modal" (click)="$event.stopPropagation()">
+            <h3>Change Status: {{ statusModalTask.title }}</h3>
+            <p class="current-status">Current: <strong>{{ formatStatus(statusModalTask.status) }}</strong></p>
+            <div class="status-buttons">
+                @for (s of getAvailableStatuses(statusModalTask.status); track s) {
+                <button class="btn btn-status" (click)="changeStatus(statusModalTask.id, s)">
+                    → {{ formatStatus(s) }}
+                </button>
+                }
+            </div>
+            <button class="btn btn-outline" (click)="closeStatusModal()">Cancel</button>
+        </div>
+    </div>
+    }

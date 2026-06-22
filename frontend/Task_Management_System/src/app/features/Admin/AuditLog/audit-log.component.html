@@ -1,0 +1,67 @@
+<div class="page-container">
+    <div class="page-header">
+        <h1>Audit Log</h1>
+        <span class="count-badge">{{ result?.total || 0 }} entries</span>
+    </div>
+
+    <div class="filter-row">
+        <select class="filter-select" [(ngModel)]="filterType" (change)="load()">
+            <option value="">All Changes</option>
+            <option value="CREATED">Created</option>
+            <option value="UPDATED">Updated</option>
+            <option value="STATUS_CHANGED">Status Changed</option>
+            <option value="ASSIGNED">Assigned</option>
+            <option value="PRIORITY_CHANGED">Priority Changed</option>
+        </select>
+        <span class="spacer"></span>
+        <span class="export-btn" (click)="exportCsv()">⬇ Export CSV</span>
+    </div>
+
+    <div class="table-card">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Task</th>
+                    <th>User</th>
+                    <th>Change</th>
+                    <th>From</th>
+                    <th>To</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (log of result?.items; track log.id) {
+                <tr>
+                    <td class="time-cell">{{ log.timestamp | date:'MMM d, HH:mm:ss' }}</td>
+                    <td>
+                        <a [routerLink]="['/tasks', log.taskId]" class="task-link">
+                            #{{ log.taskId }}
+                        </a>
+                    </td>
+                    <td>User #{{ log.userId }}</td>
+                    <td>
+                        <span class="change-badge" [class]="getBadgeClass(log.changeType)">
+                            {{ formatType(log.changeType) }}
+                        </span>
+                    </td>
+                    <td class="val-old">{{ log.oldValue || '—' }}</td>
+                    <td class="val-new">{{ log.newValue || '—' }}</td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="6" class="empty-row">No audit entries found.</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    @if (result && result.total > pageSize) {
+    <div class="pagination">
+        <button class="pg-btn" [disabled]="page === 1" (click)="goTo(page-1)">← Prev</button>
+        <span class="pg-info">Page {{ page }} of {{ Math.ceil(result.total / pageSize) }}</span>
+        <button class="pg-btn" [disabled]="page * pageSize >= result.total" (click)="goTo(page+1)">Next →</button>
+    </div>
+    }
+</div>

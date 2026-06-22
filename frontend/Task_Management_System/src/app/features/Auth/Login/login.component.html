@@ -1,0 +1,56 @@
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <span class="logo-icon"><i class="fa-solid fa-clipboard logo-icon"></i></span>
+            <h1>Task Manager</h1>
+            <p>Sign in to your account</p>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <label>Username</label>
+                <input formControlName="username" type="text" placeholder="Enter username"
+                    [class.error]="f['username'].invalid && f['username'].touched" />
+                @if (f['username'].invalid && f['username'].touched) {
+                <span class="error-msg">Username is required</span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <div class="password-wrap">
+                    <input formControlName="password" [type]="showPwd ? 'text' : 'password'"
+                        placeholder="Enter password" [class.error]="f['password'].invalid && f['password'].touched" />
+                    <button type="button" class="toggle-pwd" (click)="showPwd = !showPwd">
+                        @if (showPwd) {
+                        <i class="fa-solid fa-eye-slash"></i>
+                        } @else {
+                        <i class="fa-solid fa-eye"></i>
+                        }
+                    </button>
+                </div>
+                @if (f['password'].invalid && f['password'].touched) {
+                <span class="error-msg">Password is required</span>
+                }
+            </div>
+
+            @if (errorMsg) {
+            <div class="alert alert-error">{{ errorMsg }}</div>
+            }
+
+            <button type="submit" class="btn-submit" [disabled]="loading">
+                @if (loading) { <span class="spinner"></span> } Sign In
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Don't have an account? <a routerLink="/auth/register">Register</a>
+        </div>
+
+        <div class="demo-creds">
+            <p>Demo credentials:</p>
+            <!-- <code>admin / Admin@123</code> &nbsp;·&nbsp;
+            <code>alice / Alice@123</code> -->
+        </div>
+    </div>
+</div>

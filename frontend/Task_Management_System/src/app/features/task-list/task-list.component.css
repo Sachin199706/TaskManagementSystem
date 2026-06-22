@@ -1,0 +1,324 @@
+    .task-list-container {
+        padding: 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .filter-bar {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        align-items: center;
+    }
+
+    .search-input {
+        flex: 1;
+        min-width: 200px;
+        padding: 10px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .search-input:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px #3b82f622;
+    }
+
+    .filter-select {
+        padding: 10px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        background: white;
+    }
+
+    .loading-bar {
+        height: 3px;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        animation: loading 1.5s ease-in-out infinite;
+        margin-bottom: 16px;
+        border-radius: 2px;
+    }
+
+    @keyframes loading {
+        0%, 100% {
+            opacity: 0.4;
+        }
+
+        50% {
+            opacity: 1;
+        }
+    }
+
+    .task-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 16px;
+    }
+
+    .task-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid #e2e8f0;
+        cursor: pointer;
+        transition: all 0.2s;
+        border-left: 4px solid transparent;
+    }
+
+    .task-card:hover {
+        box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
+    }
+
+    .priority-urgent {
+        border-left-color: #ef4444;
+    }
+
+    .priority-high {
+        border-left-color: #f97316;
+    }
+
+    .priority-medium {
+        border-left-color: #eab308;
+    }
+
+    .priority-low {
+        border-left-color: #22c55e;
+    }
+
+    .task-card-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .priority-badge, .status-badge {
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 999px;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-urgent {
+        background: #fef2f2;
+        color: #ef4444;
+    }
+
+    .badge-high {
+        background: #fff7ed;
+        color: #f97316;
+    }
+
+    .badge-medium {
+        background: #fefce8;
+        color: #ca8a04;
+    }
+
+    .badge-low {
+        background: #f0fdf4;
+        color: #16a34a;
+    }
+
+    .badge-status-todo {
+        background: #f1f5f9;
+        color: #64748b;
+    }
+
+    .badge-status-inprogress {
+        background: #eff6ff;
+        color: #3b82f6;
+    }
+
+    .badge-status-review {
+        background: #fefce8;
+        color: #ca8a04;
+    }
+
+    .badge-status-completed {
+        background: #f0fdf4;
+        color: #16a34a;
+    }
+
+    .badge-status-cancelled {
+        background: #fef2f2;
+        color: #ef4444;
+    }
+
+    .task-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 12px;
+        line-height: 1.4;
+    }
+
+    .task-meta {
+        display: flex;
+        gap: 12px;
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 12px;
+    }
+
+    .overdue {
+        color: #ef4444;
+        font-weight: 600;
+    }
+
+    .task-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+    }
+
+    .btn-icon {
+        background: none;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 4px 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.15s;
+    }
+
+    .btn-icon:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+    }
+
+    .empty-state {
+        grid-column: 1/-1;
+        text-align: center;
+        padding: 64px;
+        color: #94a3b8;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 2px dashed #e2e8f0;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        margin-top: 32px;
+    }
+
+    .page-info {
+        font-size: 14px;
+        color: #64748b;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #2563eb;
+    }
+
+    .btn-outline {
+        background: white;
+        color: #374151;
+        border: 1px solid #d1d5db;
+    }
+
+    .btn-sm {
+        padding: 6px 14px;
+        font-size: 13px;
+        background: #f1f5f9;
+        color: #374151;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .btn-sm:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .modal {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        min-width: 320px;
+        max-width: 480px;
+    }
+
+    .modal h3 {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .current-status {
+        color: #64748b;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .status-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .btn-status {
+        padding: 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        cursor: pointer;
+        text-align: left;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.15s;
+    }
+
+    .btn-status:hover {
+        background: #eff6ff;
+        border-color: #3b82f6;
+        color: #3b82f6;
+    }

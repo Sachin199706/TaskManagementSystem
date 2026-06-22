@@ -37,11 +37,13 @@
     padding: 20px 16px;
     border-bottom: 1px solid #334155;
     min-height: 64px;
+    color: #dcc2bdd4;
 }
 
 .logo-icon {
     font-size: 22px;
     flex-shrink: 0;
+
 }
 
 .logo-text {

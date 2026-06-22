@@ -1,0 +1,344 @@
+    .admin-container {
+        padding: 24px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    h1 {
+        font-size: 28px;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 28px;
+    }
+
+    h2 {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 12px;
+    }
+
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 16px;
+        margin-bottom: 28px;
+    }
+
+    .kpi-card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        border: 1px solid #e2e8f0;
+        text-align: center;
+    }
+
+    .kpi-value {
+        font-size: 40px;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 8px;
+    }
+
+    .kpi-label {
+        font-size: 13px;
+        color: #64748b;
+        font-weight: 500;
+    }
+
+    .kpi-blue .kpi-value {
+        color: #3b82f6;
+    }
+
+    .kpi-orange .kpi-value {
+        color: #f97316;
+    }
+
+    .kpi-yellow .kpi-value {
+        color: #eab308;
+    }
+
+    .kpi-green .kpi-value {
+        color: #22c55e;
+    }
+
+    .kpi-red .kpi-value {
+        color: #ef4444;
+    }
+
+    .kpi-purple .kpi-value {
+        color: #8b5cf6;
+    }
+
+    .breakdown-card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 28px;
+    }
+
+    .breakdown-bar {
+        display: flex;
+        height: 24px;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 12px;
+    }
+
+    .bar-todo {
+        background: #94a3b8;
+    }
+
+    .bar-inprogress {
+        background: #3b82f6;
+    }
+
+    .bar-review {
+        background: #eab308;
+    }
+
+    .bar-completed {
+        background: #22c55e;
+    }
+
+    .bar-cancelled {
+        background: #ef4444;
+    }
+
+    .bar-legend {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        font-size: 12px;
+    }
+
+    .legend-todo {
+        color: #64748b;
+    }
+
+    .legend-inprogress {
+        color: #3b82f6;
+    }
+
+    .legend-review {
+        color: #ca8a04;
+    }
+
+    .legend-completed {
+        color: #16a34a;
+    }
+
+    .legend-cancelled {
+        color: #ef4444;
+    }
+
+    .section {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 24px;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .live-badge {
+        background: #fef2f2;
+        color: #ef4444;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 999px;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    .notification-feed {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .notification-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .notification-item.unread {
+        background: #eff6ff;
+        margin: 0 -12px;
+        padding: 10px 12px;
+        border-radius: 8px;
+    }
+
+    .notif-type-icon {
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .notif-content {
+        flex: 1;
+    }
+
+    .notif-msg {
+        font-size: 14px;
+        font-weight: 500;
+        color: #1e293b;
+    }
+
+    .notif-time {
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 2px;
+    }
+
+    .notif-link {
+        font-size: 12px;
+        color: #3b82f6;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .empty-feed {
+        color: #94a3b8;
+        text-align: center;
+        padding: 24px;
+        font-size: 14px;
+    }
+
+    .audit-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+    .audit-table th {
+        background: #f8fafc;
+        padding: 10px 12px;
+        text-align: left;
+        font-weight: 600;
+        color: #64748b;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .audit-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #374151;
+    }
+
+    .audit-table a {
+        color: #3b82f6;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .change-badge {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 4px;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-created {
+        background: #f0fdf4;
+        color: #16a34a;
+    }
+
+    .badge-updated {
+        background: #eff6ff;
+        color: #3b82f6;
+    }
+
+    .badge-status_changed {
+        background: #fefce8;
+        color: #ca8a04;
+    }
+
+    .badge-assigned {
+        background: #fdf4ff;
+        color: #9333ea;
+    }
+
+    .badge-priority_changed {
+        background: #fff7ed;
+        color: #ea580c;
+    }
+
+    .val-old {
+        color: #ef4444;
+        font-size: 12px;
+    }
+
+    .val-new {
+        color: #16a34a;
+        font-size: 12px;
+    }
+
+    .health-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+    }
+
+    .health-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 16px;
+        background: #f8fafc;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .health-icon {
+        font-size: 20px;
+    }
+
+    .health-label {
+        flex: 1;
+        font-weight: 600;
+        font-size: 14px;
+        color: #374151;
+    }
+
+    .health-status {
+        font-size: 12px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 999px;
+    }
+
+    .status-ok {
+        background: #f0fdf4;
+        color: #16a34a;
+    }
+
+    .status-warn {
+        background: #fefce8;
+        color: #ca8a04;
+    }

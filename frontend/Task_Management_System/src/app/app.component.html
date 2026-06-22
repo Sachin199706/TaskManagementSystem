@@ -1,10 +1,11 @@
 @if (showNav) {
+
 <div class="app-layout">
     <!-- Sidebar -->
     <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
         <div class="sidebar-logo">
-                <!-- <span class="logo-icon">📋</span> -->
-                <i class="fa-solid fa-list-check logo-icon"></i>
+            <!-- <span class="logo-icon">📋</span> -->
+            <i class="fa-solid fa-list-check logo-icon"></i>
             @if (!sidebarCollapsed) { <span class="logo-text">TaskManager</span> }
         </div>
 
@@ -24,7 +25,7 @@
                 <i class="fa-solid fa-plus nav-icon"></i>
                 @if (!sidebarCollapsed) { <span>New Task</span> }
             </a>
-       
+
             @if (auth.isAdmin()) {
             <div class="nav-divider"></div>
             @if (!sidebarCollapsed) { <span class="nav-section-label">Admin</span> }
@@ -43,7 +44,7 @@
                 <i class="fa-solid fa-file-alt nav-icon"></i>
                 @if (!sidebarCollapsed) { <span>Audit Log</span> }
             </a>
-        }
+            }
         </nav>
 
         <div class="sidebar-footer">
@@ -61,19 +62,20 @@
                 <h2 class="page-title">{{ currentTitle }}</h2>
             </div>
             <div class="topbar-right">
-                <app-notification-bell/>
-         <div class="user-chip" (click)="userMenuOpen = !userMenuOpen">
+                <app-notification-bell />
+                <div class="user-chip" (click)="userMenuOpen = !userMenuOpen">
                     <div class="avatar">{{ initials }}</div>
-                    <span>{{ auth.currentUser()?.displayName }}</span>
+                    <span>{{ auth.iobjCurrentUser()?.displayName }}</span>
                     <span class="chevron">▾</span>
                 </div>
                 @if (userMenuOpen) {
                 <div class="user-menu">
                     <div class="user-menu-header">
-                        <strong>{{ auth.currentUser()?.displayName }}</strong>
-                        <span class="role-badge">{{ auth.currentUser()?.role }}</span>
+                        <strong>{{ auth.iobjCurrentUser()?.displayName }}</strong>
+                        <span class="role-badge">{{ auth.iobjCurrentUser()?.role }}</span>
                     </div>
-                    <button class="user-menu-item danger" (click)="logout()">🚪 Sign Out</button>
+                    <button class="user-menu-item danger" (click)="logout()"><i
+                            class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
                 </div>
                 }
             </div>
@@ -84,9 +86,10 @@
         </main>
     </div>
 </div>
-} @else {
+}
+@else {
 <router-outlet />
 }
 
 <!-- Global toast notifications -->
- <app-toast-container /> 
+<app-toast-container />

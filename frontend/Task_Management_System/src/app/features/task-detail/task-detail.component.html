@@ -1,0 +1,205 @@
+<div class="detail-container">
+    @if (loading$ | async) {
+    <div class="skeleton-loader">
+        <div class="sk-title"></div>
+        <div class="sk-line"></div>
+        <div class="sk-line short"></div>
+    </div>
+    }
+
+    @if (task$ | async; as task) {
+    <!-- ── Breadcrumb ── -->
+    <div class="breadcrumb">
+        <a routerLink="/tasks">Tasks</a>
+        @if (task.parentTaskId) {
+        <span>/</span>
+        <a [routerLink]="['/tasks', task.parentTaskId]">Parent #{{ task.parentTaskId }}</a>
+        }
+        <span>/</span>
+        <span>#{{ task.id }}</span>
+    </div>
+
+    <!-- ── Title Row ── -->
+    <div class="title-row">
+        <div class="title-left">
+            <span class="priority-badge badge-{{ task.priority.toLowerCase() }}">{{ task.priority }}</span>
+            <h1>{{ task.title }}</h1>
+        </div>
+        <div class="title-actions">
+            @if (auth.isAdmin()) {
+            <button class="btn btn-danger" (click)="deleteTask(task.id)">🗑 Delete</button>
+            }
+            <a class="btn btn-outline" [routerLink]="['/tasks', task.id, 'edit']"><i class="fa-solid fa-pen"></i>
+                Edit</a>
+            <button class="btn btn-primary" (click)="toggleSubscribe()">
+                @if (subscribed) {
+                <i class="fa-solid fa-bell-slash"></i>
+                <span>Unsubscribe</span>
+                } @else {
+                <i class="fa-solid fa-bell"></i>
+                <span>Subscribe</span>
+                } </button>
+        </div>
+    </div>
+
+    <!-- ── Meta Row ── -->
+    <div class="meta-row">
+        <span class="status-chip chip-{{ task.status.toLowerCase() }}">
+            {{ formatStatus(task.status) }}
+        </span>
+        <span class="meta-item">
+            <i class="fa-solid fa-calendar-days"></i>
+            Due:
+            <strong [class.overdue]="isOverdue(task.dueDate)">
+                {{ task.dueDate | date:'MMM d, yyyy' }}
+            </strong>
+        </span>
+        <span class="meta-item">
+            <i class="fa-solid fa-user"></i>
+            Creator:
+            <strong>#{{ task.creatorId }}</strong>
+        </span>
+
+        @if (task.assigneeId) {
+        <span class="meta-item">
+            <i class="fa-solid fa-bullseye"></i>
+            Assignee:
+            <strong>#{{ task.assigneeId }}</strong>
+        </span>
+        }
+
+        <span class="meta-item">
+            <i class="fa-regular fa-clock"></i>
+            Created:
+            {{ task.createdAt | date:'MMM d, yyyy' }}
+        </span>
+
+    </div>
+    <!-- ── Tags ── -->
+    @if (task.tags.length) {
+    <div class="tags-row">
+        @for (tag of task.tags; track tag) {
+        <span class="tag">{{ tag }}</span>
+        }
+    </div>
+    }
+
+    <!-- ── Main Grid ── -->
+    <div class="detail-grid">
+
+        <!-- Left: Description + Subtasks + Comments -->
+        <div class="detail-main">
+
+            <!-- Description -->
+            <div class="card">
+                <h3>Description</h3>
+                <p class="description">{{ task.description || 'No description provided.' }}</p>
+            </div>
+
+            <!-- Status Transitions -->
+            <div class="card">
+                <h3>Change Status</h3>
+                <div class="status-actions">
+                    @for (s of getAvailableStatuses(task.status); track s) {
+                    <button class="btn-transition" (click)="changeStatus(task.id, s)">
+                        → {{ formatStatus(s) }}
+                    </button>
+                    }
+                    @if (!getAvailableStatuses(task.status).length) {
+                    <p class="no-transitions">No further transitions available.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Subtasks -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Subtasks ({{ task.subtasks.length || 0 }})</h3>
+                    <a class="btn-sm btn-primary" [routerLink]="['/tasks', task.id, 'subtask', 'new']">
+                        + Add Subtask
+                    </a>
+                </div>
+                @if (task.subtasks.length) {
+                <div class="subtask-list">
+                    @for (sub of task.subtasks; track sub.id) {
+                    <div class="subtask-item" [routerLink]="['/tasks', sub.id]">
+                        <span class="sub-status chip-{{ sub.status.toLowerCase() }}">
+                            {{ formatStatus(sub.status) }}
+                        </span>
+                        <span class="sub-title">{{ sub.title }}</span>
+                        <span class="sub-priority badge-{{ sub.priority.toLowerCase() }}">
+                            {{ sub.priority }}
+                        </span>
+                    </div>
+                    }
+                </div>
+                } @else {
+                <p class="empty-sub">No subtasks yet.</p>
+                }
+            </div>
+
+            <!-- Comments -->
+            <div class="card">
+                <h3>Comments ({{ comments.length }})</h3>
+                <div class="comment-list">
+                    @for (c of comments; track c.id) {
+                    <div class="comment">
+                        <div class="comment-header">
+                            <strong>User #{{ c.userId }}</strong>
+                            <span>{{ c.createdAt | date:'MMM d, HH:mm' }}</span>
+                        </div>
+                        <p class="comment-body">{{ c.content }}</p>
+                    </div>
+                    }
+                </div>
+
+                <div class="comment-form">
+                    <textarea [(ngModel)]="newComment" placeholder="Add a comment..." rows="3"
+                        class="comment-input"></textarea>
+                    <button class="btn btn-primary" [disabled]="!newComment.trim()" (click)="addComment(task.id)">Post
+                        Comment</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: History + Assign -->
+        <div class="detail-sidebar">
+
+            <!-- Assign Task -->
+            <div class="card">
+                <h3>Assign Task</h3>
+                <div class="assign-row">
+                    <input type="number" [(ngModel)]="assigneeId" placeholder="User ID" class="assign-input" />
+                    <button class="btn btn-primary" (click)="assignTask(task.id)">
+                        Assign
+                    </button>
+                </div>
+            </div>
+
+            <!-- Activity / History -->
+            <div class="card">
+                <h3>Activity Log</h3>
+                <div class="history-list">
+                    @for (log of history; track log.id) {
+                    <div class="history-item">
+                        <div class="history-icon">{{ getChangeIcon(log.changeType) }}</div>
+                        <div class="history-body">
+                            <span class="change-type">{{ log.changeType }}</span>
+                            @if (log.oldValue || log.newValue) {
+                            <span class="change-vals">
+                                @if (log.oldValue) { <span class="old">{{ log.oldValue }}</span> }
+                                @if (log.oldValue && log.newValue) { <span>→</span> }
+                                @if (log.newValue) { <span class="new">{{ log.newValue }}</span> }
+                            </span>
+                            }
+                            <span class="history-time">{{ log.timestamp | date:'MMM d, HH:mm' }}</span>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+    }
+</div>

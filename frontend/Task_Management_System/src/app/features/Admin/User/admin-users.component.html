@@ -1,0 +1,77 @@
+<div class="page-container">
+    <div class="page-header">
+        <h1>User Management</h1>
+        <span class="count-badge">{{ total }} users</span>
+    </div>
+
+    <div class="search-bar">
+        <input [(ngModel)]="search" (ngModelChange)="filter()" placeholder="Search by name, username or email..."
+            class="search-input" />
+    </div>
+
+    @if (loading) {
+    <div class="loading-state">Loading users...</div>
+    } @else {
+    <div class="table-card">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (u of filtered; track u.id) {
+                <tr [class.inactive-row]="!u.isActive">
+                    <td>
+                        <div class="user-cell">
+                            <div class="avatar" [style.background]="avatarColor(u.displayName)">
+                                {{ u.displayName[0].toUpperCase() }}
+                            </div>
+                            <div>
+                                <div class="username">{{ u.displayName }}</div>
+                                <div class="handle">&#64;{{ u.username }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ u.email }}</td>
+                    <td>
+                        <span class="role-badge" [class]="'role-' + u.role.toLowerCase()">
+                            {{ u.role }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-dot" [class]="u.isActive ? 'dot-active' : 'dot-inactive'">
+                            {{ u.isActive ? '● Active' : '○ Inactive' }}
+                        </span>
+                    </td>
+                    <td>{{ u.createdAt | date:'MMM d, yyyy' }}</td>
+                    <td>
+                        <div class="action-row">
+                            @if (u.isActive) {
+                            <button class="btn-action" (click)="toggleRole(u)">
+                                {{ u.role === 'Admin' ? '↓ Make User' : '↑ Make Admin' }}
+                            </button>
+                            <button class="btn-action danger" (click)="deactivate(u.id)">
+                                Deactivate
+                            </button>
+                            } @else {
+                            <span class="inactive-label">Inactive</span>
+                            }
+                        </div>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="6" class="empty-row">No users found.</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+</div>

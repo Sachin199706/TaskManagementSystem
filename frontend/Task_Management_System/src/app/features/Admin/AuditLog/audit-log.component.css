@@ -1,0 +1,201 @@
+    .page-container {
+        padding: 24px;
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        font-size: 26px;
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .count-badge {
+        background: #eff6ff;
+        color: #3b82f6;
+        font-size: 13px;
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: 999px;
+    }
+
+    .filter-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .filter-select {
+        padding: 9px 12px;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 13px;
+        outline: none;
+        cursor: pointer;
+    }
+
+    .spacer {
+        flex: 1;
+    }
+
+    .export-btn {
+        font-size: 13px;
+        font-weight: 600;
+        color: #3b82f6;
+        cursor: pointer;
+        padding: 8px 16px;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        background: #eff6ff;
+        transition: all 0.15s;
+    }
+
+    .export-btn:hover {
+        background: #dbeafe;
+    }
+
+    .table-card {
+        background: white;
+        border-radius: 14px;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table th {
+        background: #f8fafc;
+        padding: 11px 16px;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .data-table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 13px;
+        color: #374151;
+    }
+
+    .data-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .data-table tr:hover td {
+        background: #fafafa;
+    }
+
+    .time-cell {
+        color: #64748b;
+        font-size: 12px;
+        font-family: monospace;
+        white-space: nowrap;
+    }
+
+    .task-link {
+        color: #3b82f6;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .task-link:hover {
+        text-decoration: underline;
+    }
+
+    .change-badge {
+        font-size: 10px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 5px;
+        letter-spacing: 0.4px;
+        white-space: nowrap;
+    }
+
+    .badge-created {
+        background: #f0fdf4;
+        color: #16a34a;
+    }
+
+    .badge-updated {
+        background: #eff6ff;
+        color: #3b82f6;
+    }
+
+    .badge-status_changed {
+        background: #fefce8;
+        color: #ca8a04;
+    }
+
+    .badge-assigned {
+        background: #fdf4ff;
+        color: #9333ea;
+    }
+
+    .badge-priority_changed {
+        background: #fff7ed;
+        color: #ea580c;
+    }
+
+    .val-old {
+        color: #ef4444;
+        font-size: 12px;
+        font-family: monospace;
+    }
+
+    .val-new {
+        color: #16a34a;
+        font-size: 12px;
+        font-family: monospace;
+        font-weight: 600;
+    }
+
+    .empty-row {
+        text-align: center;
+        padding: 40px;
+        color: #94a3b8;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        margin-top: 20px;
+    }
+
+    .pg-btn {
+        padding: 7px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        background: white;
+        color: #374151;
+    }
+
+    .pg-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+    .pg-info {
+        font-size: 13px;
+        color: #64748b;
+    }

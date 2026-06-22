@@ -1,0 +1,70 @@
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <span class="logo-icon">📋</span>
+            <h1>Create Account</h1>
+            <p>Join Task Manager today</p>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input formControlName="username" type="text" placeholder="username"
+                        [class.error]="invalid('username')" />
+                    @if (invalid('username')) {
+                    <span class="error-msg">Min 3 characters required</span>
+                    }
+                </div>
+                <div class="form-group">
+                    <label>Display Name</label>
+                    <input formControlName="displayName" type="text" placeholder="Full Name"
+                        [class.error]="invalid('displayName')" />
+                    @if (invalid('displayName')) {
+                    <span class="error-msg">Display name required</span>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input formControlName="email" type="email" placeholder="you@example.com"
+                    [class.error]="invalid('email')" />
+                @if (invalid('email')) {
+                <span class="error-msg">Valid email required</span>
+                }
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Password</label>
+                    <input formControlName="password" type="password" placeholder="Min 8 chars"
+                        [class.error]="invalid('password')" />
+                    @if (invalid('password')) {
+                    <span class="error-msg">Min 8 chars, uppercase & number</span>
+                    }
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input formControlName="confirmPassword" type="password" placeholder="Repeat password"
+                        [class.error]="form.errors?.['mismatch'] && form.get('confirmPassword')?.touched" />
+                    @if (form.errors?.['mismatch'] && form.get('confirmPassword')?.touched) {
+                    <span class="error-msg">Passwords do not match</span>
+                    }
+                </div>
+            </div>
+
+            @if (errorMsg) {
+            <div class="alert alert-error">{{ errorMsg }}</div>
+            }
+
+            <button type="submit" class="btn-submit" [disabled]="loading">
+                @if (loading) { <span class="spinner"></span> } Create Account
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Already have an account? <a routerLink="/auth/login">Sign In</a>
+        </div>
+    </div>
+</div>

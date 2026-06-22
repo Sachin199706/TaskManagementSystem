@@ -1,0 +1,147 @@
+<div class="admin-container">
+    <h1>Admin Dashboard</h1>
+
+    <!-- ── KPI Cards ── -->
+    @if (metrics) {
+    <div class="kpi-grid">
+        <div class="kpi-card kpi-blue">
+            <div class="kpi-value">{{ metrics.totalTasks }}</div>
+            <div class="kpi-label">Total Tasks</div>
+        </div>
+        <div class="kpi-card kpi-orange">
+            <div class="kpi-value">{{ metrics.inProgressCount }}</div>
+            <div class="kpi-label">In Progress</div>
+        </div>
+        <div class="kpi-card kpi-yellow">
+            <div class="kpi-value">{{ metrics.reviewCount }}</div>
+            <div class="kpi-label">In Review</div>
+        </div>
+        <div class="kpi-card kpi-green">
+            <div class="kpi-value">{{ metrics.completedCount }}</div>
+            <div class="kpi-label">Completed</div>
+        </div>
+        <div class="kpi-card kpi-red">
+            <div class="kpi-value">{{ metrics.overdueCount }}</div>
+            <div class="kpi-label">Overdue</div>
+        </div>
+        <div class="kpi-card kpi-purple">
+            <div class="kpi-value">{{ metrics.urgentCount }}</div>
+            <div class="kpi-label">Urgent</div>
+        </div>
+    </div>
+
+    <!-- ── Status breakdown bar ── -->
+    <div class="breakdown-card">
+        <h3>Task Status Distribution</h3>
+        <div class="breakdown-bar">
+            <div class="bar-todo" [style.width.%]="pct(metrics.todoCount, metrics.totalTasks)"
+                [title]="'Todo: ' + metrics.todoCount"></div>
+            <div class="bar-inprogress" [style.width.%]="pct(metrics.inProgressCount, metrics.totalTasks)"
+                [title]="'In Progress: ' + metrics.inProgressCount"></div>
+            <div class="bar-review" [style.width.%]="pct(metrics.reviewCount, metrics.totalTasks)"
+                [title]="'Review: ' + metrics.reviewCount"></div>
+            <div class="bar-completed" [style.width.%]="pct(metrics.completedCount, metrics.totalTasks)"
+                [title]="'Completed: ' + metrics.completedCount"></div>
+            <div class="bar-cancelled" [style.width.%]="pct(metrics.cancelledCount, metrics.totalTasks)"
+                [title]="'Cancelled: ' + metrics.cancelledCount"></div>
+        </div>
+        <div class="bar-legend">
+            <span class="legend-todo">Todo ({{ metrics.todoCount }})</span>
+            <span class="legend-inprogress">In Progress ({{ metrics.inProgressCount }})</span>
+            <span class="legend-review">Review ({{ metrics.reviewCount }})</span>
+            <span class="legend-completed">Completed ({{ metrics.completedCount }})</span>
+            <span class="legend-cancelled">Cancelled ({{ metrics.cancelledCount }})</span>
+        </div>
+    </div>
+    }
+
+    <!-- ── Live Notifications Panel ── -->
+    <div class="section">
+        <div class="section-header">
+            <h2>Live Activity</h2>
+            <span class="live-badge">● LIVE</span>
+        </div>
+        <div class="notification-feed">
+            @for (n of signalR.notifications(); track n.id) {
+            <div class="notification-item" [class.unread]="!n.read">
+                <div class="notif-type-icon">{{ getNotifIcon(n.type) }}</div>
+                <div class="notif-content">
+                    <div class="notif-msg">{{ n.message }}</div>
+                    <div class="notif-time">{{ n.timestamp | date:'HH:mm:ss' }}</div>
+                </div>
+                @if (n.taskId) {
+                <a class="notif-link" [routerLink]="['/tasks', n.taskId]">View →</a>
+                }
+            </div>
+            } @empty {
+            <p class="empty-feed">No live activity yet...</p>
+            }
+        </div>
+    </div>
+
+    <!-- ── Audit Log ── -->
+    <div class="section">
+        <div class="section-header">
+            <h2>Audit Log</h2>
+            <a routerLink="/admin/audit">View All →</a>
+        </div>
+        @if (auditLogs) {
+        <table class="audit-table">
+            <thead>
+                <tr>
+                    <th>Task</th>
+                    <th>User</th>
+                    <th>Change</th>
+                    <th>Old</th>
+                    <th>New</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (log of auditLogs.items; track log.id) {
+                <tr>
+                    <td><a [routerLink]="['/tasks', log.taskId]">#{{ log.taskId }}</a></td>
+                    <td>User #{{ log.userId }}</td>
+                    <td><span class="change-badge badge-{{ log.changeType.toLowerCase() }}">
+                            {{ log.changeType }}
+                        </span></td>
+                    <td class="val-old">{{ log.oldValue || '—' }}</td>
+                    <td class="val-new">{{ log.newValue || '—' }}</td>
+                    <td>{{ log.timestamp | date:'MMM d, HH:mm' }}</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+        }
+    </div>
+
+    <!-- ── System Health ── -->
+    <div class="section">
+        <h2>System Health</h2>
+        <div class="health-grid">
+            <div class="health-item">
+                <span class="health-icon">🐇</span>
+                <span class="health-label">RabbitMQ</span>
+                <span class="health-status status-ok">Healthy</span>
+            </div>
+            <div class="health-item">
+                <span class="health-icon">⚡</span>
+                <span class="health-label">SignalR</span>
+                <span class="health-status"
+                    [class]="signalR.connectionState() === 'Connected' ? 'status-ok' : 'status-warn'">
+                    {{ signalR.connectionState() }}
+                </span>
+            </div>
+            <div class="health-item">
+                <span class="health-icon">🔴</span>
+                <span class="health-label">Redis</span>
+                <span class="health-status status-ok">Connected</span>
+            </div>
+            <div class="health-item">
+                <span class="health-icon">🗄️</span>
+                <span class="health-label">SQL Server</span>
+                <span class="health-status status-ok">Online</span>
+            </div>
+        </div>
+    </div>
+</div>
